@@ -43,14 +43,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
 
         user_input = update.message.text
-        parts = split_text(user_input, max_words=7)
+        parts = split_text(user_input, max_words=9)
 
         translated_parts = []
         for part in parts:
             translated_part = generate_response(part)
             translated_parts.append(translated_part)
 
-        full_translation = '\n'.join(translated_parts)
+        full_translation = ' '.join(translated_parts)
         await update.message.reply_text(full_translation)
     except Exception as e:
         await update.message.reply_text("Произошла ошибка. Попробуйте позже.")
