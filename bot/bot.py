@@ -19,12 +19,12 @@ def generate_response(prompt):
         return_tensors="pt",
         padding=True,
         truncation=True,
-        max_length=128
+        max_length=100
     )
     response = model.generate(
         inputs["input_ids"],
         attention_mask=inputs["attention_mask"],
-        max_length=400,
+        max_length=100,
         num_beams=5,
         early_stopping=True,
         pad_token_id=tokenizer.pad_token_id,
@@ -32,14 +32,26 @@ def generate_response(prompt):
     )
     return tokenizer.decode(response[0], skip_special_tokens=True)
 
+def split_text(text, max_words=100):
+    words = text.split()
+    return [' '.join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Привет! Я бот-переводчик с английского языка на русский язык. просто напиши мне текст на английском, и я переведу тебе его на русский. Пожалуйста, только пиши не очень большие сообщения, я не умею переводить большие тексты :)")
+    await update.message.reply_text("Привет! Я бот-переводчик с английского языка на русский язык. просто напиши мне текст на английском, и я переведу тебе его на русский. :)")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
+
         user_input = update.message.text
-        bot_reply = generate_response(user_input)
-        await update.message.reply_text(bot_reply)
+        parts = split_text(user_input, max_words=7)
+
+        translated_parts = []
+        for part in parts:
+            translated_part = generate_response(part)
+            translated_parts.append(translated_part)
+
+        full_translation = '\n'.join(translated_parts)
+        await update.message.reply_text(full_translation)
     except Exception as e:
         await update.message.reply_text("Произошла ошибка. Попробуйте позже.")
         logging.error(f"Ошибка при обработке сообщения: {e}")
