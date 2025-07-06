@@ -1,0 +1,4 @@
+dataset/train2.parquet filter=lfs diff=lfs merge=lfs -text
+dataset/train3.parquet filter=lfs diff=lfs merge=lfs -text
+bot/model/translation_model/optimizer.pt filter=lfs diff=lfs merge=lfs -text
+bot/model/translation_model/model.safetensors filter=lfs diff=lfs merge=lfs -text
